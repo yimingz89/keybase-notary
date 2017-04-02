@@ -5,6 +5,9 @@
 // Purpose: To extract the Keybase merkle root from the Internet
 
 // NOTE: Does not work.
+
+package org.keybase;
+
 import org.json.*;
 import java.util.*;
 import java.io.*;
