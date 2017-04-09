@@ -6,9 +6,7 @@
 // keybase website, and then extracts the merkle root from the
 // javascript.
 
-//package org.keybase; // can't get it to compile with this
-
-
+package org.keybase;
 
 import java.net.*;
 import java.util.*;
@@ -24,7 +22,7 @@ public class Extract_merkle_root {
 	    to_output = new PrintWriter(output);
 	}
 	catch (FileNotFoundException ex) {
-	    System.out.println("ERRROR: Cannot create " + pathname);
+	    System.out.println("ERROR: Cannot create " + pathname);
 	    System.exit(1);
 	}
 	try {
@@ -37,31 +35,31 @@ public class Extract_merkle_root {
 	to_output.close();
     }
 
-    //    public static String parseJSON(JsonParser jsonParser) throws JsonParseException, IOException {
-    //	while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
-    //	    String name = jsonParser.getCurrentName();
-    //	    if (name.equals("hash"))
-    //		return jsonParser.getText();
-    //	}
-    //	System.out.println("ERROR: Unable to find token \"hash\"");
-    //	System.exit(1);
-    //    }
-
     // returns the numth merkle root 
     public static void getRoot(int num, PrintWriter output_file) throws Exception {
 	URL keybase = new URL("https://keybase.io/_/api/1.0/merkle/root.json?seqno=" + num);
         URLConnection yc = keybase.openConnection();
         BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-	//	StringBuffer input = new StringBuffer();
 	String inputLine;
 	
-        while ((inputLine = in.readLine()) != null) {
+        while ((inputLine = in.readLine()) != null)
 	    output_file.println(inputLine);
-	    //	    input.append(inputLine);
-	    //	    input.append("\n");
-	}
         in.close();
-	//	return input.toString();
     }
     
 }
+
+//    public static String parseJSON(JsonParser jsonParser) throws JsonParseException, IOException {
+//	while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
+//	    String name = jsonParser.getCurrentName();
+//	    if (name.equals("hash"))
+//		return jsonParser.getText();
+//	}
+//	System.out.println("ERROR: Unable to find token \"hash\"");
+//	System.exit(1);
+//    }
+
+//	StringBuffer input = new StringBuffer();
+//	    input.append(inputLine);
+//	    input.append("\n");
+//	return input.toString();
