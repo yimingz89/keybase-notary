@@ -8,6 +8,8 @@
 
 //package org.keybase; // can't get it to compile with this
 
+
+
 import java.net.*;
 import java.util.*;
 import java.io.*;
@@ -15,30 +17,51 @@ import java.io.*;
 public class Extract_merkle_root {
 
     public static void main(String[] args) {
-	String merkleroot = "";
+	String pathname = "data.json";
+	File output = new File(pathname);
+	PrintWriter to_output = null;
 	try {
-	    merkleroot = getRoot(10);
+	    to_output = new PrintWriter(output);
+	}
+	catch (FileNotFoundException ex) {
+	    System.out.println("ERRROR: Cannot create " + pathname);
+	    System.exit(1);
+	}
+	try {
+	    getRoot(10, to_output);
 	}
 	catch (Exception e) {
 	    System.out.println("Error getting Root");
 	    System.exit(1);
 	}
-	System.out.print(merkleroot);
+	to_output.close();
     }
 
+    //    public static String parseJSON(JsonParser jsonParser) throws JsonParseException, IOException {
+    //	while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
+    //	    String name = jsonParser.getCurrentName();
+    //	    if (name.equals("hash"))
+    //		return jsonParser.getText();
+    //	}
+    //	System.out.println("ERROR: Unable to find token \"hash\"");
+    //	System.exit(1);
+    //    }
+
     // returns the numth merkle root 
-    public static String getRoot(int num) throws Exception {
+    public static void getRoot(int num, PrintWriter output_file) throws Exception {
 	URL keybase = new URL("https://keybase.io/_/api/1.0/merkle/root.json?seqno=" + num);
         URLConnection yc = keybase.openConnection();
         BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-	StringBuffer input = new StringBuffer();
+	//	StringBuffer input = new StringBuffer();
 	String inputLine;
+	
         while ((inputLine = in.readLine()) != null) {
-	    input.append(inputLine);
-	    input.append("\n");
+	    output_file.println(inputLine);
+	    //	    input.append(inputLine);
+	    //	    input.append("\n");
 	}
         in.close();
-	return input.toString();
+	//	return input.toString();
     }
     
 }
