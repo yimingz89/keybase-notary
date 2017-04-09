@@ -1,6 +1,7 @@
 // Authors: John Kuszmaul, Yiming Zheng
 // CS PRIMES 2017
 // Date: 4/2/2017
+
 // Purpose: This program first receieves the javascript from the
 // keybase website, and then extracts the merkle root from the
 // javascript.
@@ -8,7 +9,6 @@
 //package org.keybase; // can't get it to compile with this
 
 import java.net.*;
-//import org.json.*; // not downloaded yet
 import java.util.*;
 import java.io.*;
 
@@ -26,9 +26,7 @@ public class Extract_merkle_root {
 	System.out.print(merkleroot);
     }
 
-    // returns the nth merkle root right now it just returns the most
-    // recent merkle root because I don't know where to access the
-    // rest.
+    // returns the numth merkle root 
     public static String getRoot(int num) throws Exception {
 	URL keybase = new URL("https://keybase.io/_/api/1.0/merkle/root.json?seqno=" + num);
         URLConnection yc = keybase.openConnection();
