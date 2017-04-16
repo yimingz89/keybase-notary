@@ -1,3 +1,10 @@
+// Authors: 2017 CS PRIMES
+// Robert Chen, John Kuszmaul, Yiming Zheng
+// Mentored by Alin Tomescu
+
+// Purpose: To access the Keybase server and read the merkle root from
+// JSON
+
 package org.keybase;
 
 import java.net.URL;
@@ -8,8 +15,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JSONParser {
-    public static void main(String[] args) throws Exception {
-	int num = 11;
+    public static String getMerkleRoot(int num) throws Exception {
 	
 	URL url = new URL("https://keybase.io/_/api/1.0/merkle/root.json?seqno=1");
 	if (num >= 1) {
@@ -22,9 +28,10 @@ public class JSONParser {
 	ObjectMapper objectMapper = new ObjectMapper();
 	try {
 	    MerkleRoot root = objectMapper.readValue(url.openStream(), MerkleRoot.class);
-	    System.out.println(root.getHash());
+	    return root.getHash();
 	} catch (IOException e) {
 	    e.printStackTrace();
+	    return "";	
 	}
 	
 	
