@@ -9,14 +9,13 @@ package org.keybase;
 
 import java.net.URL;
 import java.io.*;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JSONParser {
+
     public static String getMerkleRoot(int num) throws Exception {
-	
 	URL url = new URL("https://keybase.io/_/api/1.0/merkle/root.json?seqno=1");
 	if (num >= 1) {
 	    url = new URL("https://keybase.io/_/api/1.0/merkle/root.json?seqno=" + num);
@@ -33,7 +32,6 @@ public class JSONParser {
 	    e.printStackTrace();
 	    return "";	
 	}
-	
-	
     }
+    
 }

@@ -1,0 +1,47 @@
+2017-04-21 15:47:42 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2017-04-21 15:47:42 Bitcoin version v0.14.0.0-g43a987c1c
+2017-04-21 15:47:42 InitParameterInteraction: parameter interaction: -whitelistforcerelay=1 -> setting -whitelistrelay=1
+2017-04-21 15:47:42 Validating signatures for all blocks.
+2017-04-21 15:47:42 Default data directory /home/john/.bitcoin
+2017-04-21 15:47:42 Using data directory /home/john/Dropbox/GitHub/keybase-notary/regtest-server/btcd/regtest
+2017-04-21 15:47:42 Using config file /home/john/Dropbox/GitHub/keybase-notary/regtest-server/btcd/bitcoin.conf
+2017-04-21 15:47:42 Using at most 125 automatic connections (1024 file descriptors available)
+2017-04-21 15:47:42 Using 32 MiB out of 32 requested for signature cache, able to store 1048576 elements
+2017-04-21 15:47:42 Using 2 threads for script verification
+2017-04-21 15:47:42 scheduler thread start
+2017-04-21 15:47:42 Allowing HTTP connections from: 127.0.0.0/8 ::1/128 
+2017-04-21 15:47:42 Binding RPC on address ::1 port 8332
+2017-04-21 15:47:42 Binding RPC on address ::1 port 8332 failed.
+2017-04-21 15:47:42 Binding RPC on address 127.0.0.1 port 8332
+2017-04-21 15:47:42 Binding RPC on address 127.0.0.1 port 8332 failed.
+2017-04-21 15:47:42 Unable to bind any endpoint for RPC server
+2017-04-21 15:47:42 Error: Unable to start HTTP server. See debug log for details.
+2017-04-21 15:47:42 Interrupting HTTP server
+2017-04-21 15:47:42 Interrupting HTTP RPC server
+2017-04-21 15:47:42 Interrupting RPC
+2017-04-21 15:47:42 Shutdown: In progress...
+2017-04-21 15:47:42 Stopping HTTP RPC server
+2017-04-21 15:47:42 Stopping RPC
+2017-04-21 15:47:42 RPC stopped.
+2017-04-21 15:47:42 Stopping HTTP server
+2017-04-21 15:47:42 Stopped HTTP server
+2017-04-21 15:47:42 Shutdown: done

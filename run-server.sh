@@ -201,5 +201,5 @@ echo " * btc net: $btc_env"
 [ -n "$*" ] && echo " * extra args: $*"
 echo
 (cd $scriptdir/;
-mvn exec:java -Dexec.mainClass=org.catena.server.ServerApp -Dexec.cleanupDaemonThreads=false -Dexec.args="$privkey $btc_env $datadir $txid $*")
+mvn exec:java -Dexec.mainClass=org.catena.keybase.NotaryApp -Dexec.cleanupDaemonThreads=false -Dexec.args="$privkey $btc_env $datadir $txid $*")
 echo
