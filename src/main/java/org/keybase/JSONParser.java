@@ -33,5 +33,19 @@ public class JSONParser {
 	    return "";	
 	}
     }
+
+    public static int getCurrentSeqno() {
+	URL url = new URL("https://keybase.io/_/api/1.0/merkle/root.json");
+
+	ObjectMapper objectMapper = new ObjectMapper();
+	try {
+	    MerkleRoot root = objectMapper.readValue(url.openStream(), MerkleRoot.class);
+	    return root.getSeqno();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	    return -1;	
+	}
+	
+    }
     
 }

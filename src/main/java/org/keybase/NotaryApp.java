@@ -36,6 +36,8 @@ public class NotaryApp extends CatenaApp {
     private static CatenaServer server;
     private static Scanner scanner;
     private static int secondsBetween = 14400;
+
+    private int seqno = 0;
  
     public static void main(String[] args) throws Exception {
         //BriefLogFormatter.init();
@@ -82,7 +84,7 @@ public class NotaryApp extends CatenaApp {
 
     private static void notarizeKeybase() {
 	while (true) {
-	    maybeIssueStatement();
+	    maybeIssueStatements();
 	    waitTime();
 	}
     }
@@ -90,8 +92,20 @@ public class NotaryApp extends CatenaApp {
     private static void waitTime() {
 	TimeUnit.SECONDS.sleep(secondsBetween);
     }
+
+    private static void maybeIssueStatements() {
+	int currentSeqno = JSONParser.getCurrentSeqno();
+	if (currentSeqno == -1) {
+	    System.err.println("ERROR: IO Exception while getting seqno");
+	    System.exit(1);
+	}
+	while (this.seqno < currentSeqno) {
+	    this.seqno++;
+	    issueStatmentHandler(i);
+	}
+    }
     
-    private static void issueStatementHandler() throws InsufficientMoneyException, IOException, InterruptedException {
+    private static void issueStatementHandler(int sequenceNumber) throws InsufficientMoneyException, IOException, InterruptedException {
         // If there's no root-of-trust TXN, we gotta take care of that first
         if(ext.hasRootOfTrustTxid() == false) {
             issueRootOfTrustHandler();
@@ -108,7 +122,7 @@ public class NotaryApp extends CatenaApp {
 	//            return;
 	//        }
 
-	JSONParser.getMerkleRoot(seqno);
+	JSONParser.getMerkleRoot(sequenceNumber);
 	
         issueStatement(stmt);
     }
