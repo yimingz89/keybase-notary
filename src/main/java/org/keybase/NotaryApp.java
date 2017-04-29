@@ -9,11 +9,11 @@ package org.keybase;
 import java.io.*;
 import java.util.*;
 
-package org.catena.server;
-
 import org.bitcoinj.core.*;
+import org.catena.common.CatenaServer;
 import org.catena.common.CatenaApp;
 import org.catena.common.CatenaUtils;
+import org.catena.common.ServerApp;
 import org.catena.common.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +70,7 @@ public class NotaryApp extends CatenaApp {
         }
         
         // Server can tell if it needs the chainKey or not, by looking in its wallet
-        server = new CatenaServer(params, new File(directory), chainKey, null);
+        server = new org.catena.common.CatenaServer(params, new File(directory), chainKey, null);
         svc = server;
         //WalletAppKit server = new WalletAppKit(params, new File(directory), "-server");
 
