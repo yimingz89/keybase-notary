@@ -35,7 +35,7 @@ public class NotaryApp extends CatenaApp {
     private static ECKey chainKey;
     private static CatenaServer server;
     private static Scanner scanner;
-    private static int secondsBetween = 14400;
+    private static int secondsBetween = 1; // waits only 1 second.
 
     private static int seqno = 0;
  
@@ -83,10 +83,12 @@ public class NotaryApp extends CatenaApp {
     }
 
     private static void notarizeKeybase() {
-	while (true) {
-	    maybeIssueStatements();
-	    waitTime();
-	}
+    	scanner = new Scanner(System.in);
+    	while (true) {
+    		if (!maybeIssueStatements())
+    			System.out.println("No new Merkle Roots to issue");
+    		waitTime();
+    	}
     }
 
     private static void waitTime() {
@@ -106,30 +108,32 @@ public class NotaryApp extends CatenaApp {
             log.debug("Already have root-of-trust txid '{}'", ext.getRootOfTrustTxid());
         }
 
-	String stmt;
-	try {
-		stmt = JSONParser.getMerkleRoot(sequenceNumber);
-	} catch (Exception e) {
-		stmt = "";
-		System.exit(1);
-	}
-	//        System.out.print("Please type in your next issued statement: ");
-	//        String stmt = scanner.nextLine();
-	//        if(stmt.trim().isEmpty()) {
-	//            System.out.println("Cancelled due to empty statement. Please try again but type something in.");
-	//            return;
-	//        }
-	
+        String stmt;
+        try {
+        	stmt = JSONParser.getMerkleRoot(sequenceNumber);
+        } catch (Exception e) {
+        	stmt = "";
+        	System.exit(1);
+        }
+        //        System.out.print("Please type in your next issued statement: ");
+        //        String stmt = scanner.nextLine();
+        //        if(stmt.trim().isEmpty()) {
+        //            System.out.println("Cancelled due to empty statement. Please try again but type something in.");
+        //            return;
+        //        }
+        System.out.println(stmt);
         issueStatement(stmt);
     }    
     
-    private static void maybeIssueStatements() {
+    private static boolean maybeIssueStatements() {
     	int currentSeqno = JSONParser.getCurrentSeqno();
     	if (currentSeqno == -1) {
     		System.err.println("ERROR: IO Exception while getting seqno");
     		System.exit(1);
     	}
+    	boolean issuedStatement = false;
     	while (seqno < currentSeqno) {
+    		issuedStatement = true;
     		seqno++;
     		try {
     			issueStatementHandler(seqno);
@@ -139,6 +143,7 @@ public class NotaryApp extends CatenaApp {
     		}
     	
     	}
+    	return issuedStatement;
     }
     
 

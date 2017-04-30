@@ -16,22 +16,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class JSONParser {
 
     public static String getMerkleRoot(int num) throws Exception {
-	URL url = new URL("https://keybase.io/_/api/1.0/merkle/root.json?seqno=1");
-	if (num >= 1) {
-	    url = new URL("https://keybase.io/_/api/1.0/merkle/root.json?seqno=" + num);
-	} else {
-	    System.out.println("ERROR: Not a valid URL");
-	    System.exit(1);
-	}
-	
-	ObjectMapper objectMapper = new ObjectMapper();
-	try {
-	    MerkleRoot root = objectMapper.readValue(url.openStream(), MerkleRoot.class);
-	    return root.getHash();
-	} catch (IOException e) {
-	    e.printStackTrace();
-	    return "";	
-	}
+		URL url = new URL("https://keybase.io/_/api/1.0/merkle/root.json?seqno=1");
+		if (num >= 1) {
+		    url = new URL("https://keybase.io/_/api/1.0/merkle/root.json?seqno=" + num);
+		} else {
+		    System.out.println("ERROR: Not a valid URL");
+		    System.exit(1);
+		}
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+		    MerkleRoot root = objectMapper.readValue(url.openStream(), MerkleRoot.class);
+		    return root.getHash();
+		} catch (IOException e) {
+		    e.printStackTrace();
+		    return "";	
+		}
     }
 
     public static int getCurrentSeqno() {
