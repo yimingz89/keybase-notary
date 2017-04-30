@@ -10,10 +10,10 @@ import java.io.*;
 import java.util.*;
 
 import org.bitcoinj.core.*;
-import org.catena.common.CatenaServer;
+import org.catena.server.CatenaServer;
 import org.catena.common.CatenaApp;
 import org.catena.common.CatenaUtils;
-import org.catena.common.ServerApp;
+import org.catena.server.ServerApp;
 import org.catena.common.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ public class NotaryApp extends CatenaApp {
     private static Scanner scanner;
     private static int secondsBetween = 14400;
 
-    private int seqno = 0;
+    private static int seqno = 0;
  
     public static void main(String[] args) throws Exception {
         //BriefLogFormatter.init();
@@ -70,7 +70,7 @@ public class NotaryApp extends CatenaApp {
         }
         
         // Server can tell if it needs the chainKey or not, by looking in its wallet
-        server = new org.catena.common.CatenaServer(params, new File(directory), chainKey, null);
+        server = new org.catena.server.CatenaServer(params, new File(directory), chainKey, null);
         svc = server;
         //WalletAppKit server = new WalletAppKit(params, new File(directory), "-server");
 
@@ -90,21 +90,13 @@ public class NotaryApp extends CatenaApp {
     }
 
     private static void waitTime() {
-	TimeUnit.SECONDS.sleep(secondsBetween);
+    	try {
+    		Thread.sleep(1000 * secondsBetween);
+    	} catch (InterruptedException e) {
+    		Thread.currentThread().interrupt();
+    	}
     }
 
-    private static void maybeIssueStatements() {
-	int currentSeqno = JSONParser.getCurrentSeqno();
-	if (currentSeqno == -1) {
-	    System.err.println("ERROR: IO Exception while getting seqno");
-	    System.exit(1);
-	}
-	while (this.seqno < currentSeqno) {
-	    this.seqno++;
-	    issueStatmentHandler(i);
-	}
-    }
-    
     private static void issueStatementHandler(int sequenceNumber) throws InsufficientMoneyException, IOException, InterruptedException {
         // If there's no root-of-trust TXN, we gotta take care of that first
         if(ext.hasRootOfTrustTxid() == false) {
@@ -115,17 +107,40 @@ public class NotaryApp extends CatenaApp {
         }
 
 	String stmt;
+	try {
+		stmt = JSONParser.getMerkleRoot(sequenceNumber);
+	} catch (Exception e) {
+		stmt = "";
+		System.exit(1);
+	}
 	//        System.out.print("Please type in your next issued statement: ");
 	//        String stmt = scanner.nextLine();
 	//        if(stmt.trim().isEmpty()) {
 	//            System.out.println("Cancelled due to empty statement. Please try again but type something in.");
 	//            return;
 	//        }
-
-	JSONParser.getMerkleRoot(sequenceNumber);
 	
         issueStatement(stmt);
+    }    
+    
+    private static void maybeIssueStatements() {
+    	int currentSeqno = JSONParser.getCurrentSeqno();
+    	if (currentSeqno == -1) {
+    		System.err.println("ERROR: IO Exception while getting seqno");
+    		System.exit(1);
+    	}
+    	while (seqno < currentSeqno) {
+    		seqno++;
+    		try {
+    			issueStatementHandler(seqno);
+    		} catch (Exception e) {
+    			System.out.println(e);
+    			System.exit(1);
+    		}
+    	
+    	}
     }
+    
 
     private static void issueStatement(String stmt)
 	throws InsufficientMoneyException, IOException, InterruptedException {
