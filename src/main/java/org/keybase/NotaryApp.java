@@ -10,6 +10,7 @@ import java.io.*;
 import java.util.*;
 
 import org.bitcoinj.core.*;
+import org.bitcoinj.wallet.Wallet.SendResult;
 import org.catena.server.CatenaServer;
 import org.catena.common.CatenaApp;
 import org.catena.common.CatenaUtils;
@@ -155,10 +156,20 @@ public class NotaryApp extends CatenaApp {
         
         System.out.printf("Created tx '%s' with statement '%s' (prev tx is '%s')\n", txn.getHash(), stmt, prevTx.getHash());
     }
+    
+    public static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                                 + Character.digit(s.charAt(i+1), 16));
+        }
+        return data;
+    }
 
     private static Transaction appendStatement(String stmt) throws InsufficientMoneyException, IOException, 
 								   InterruptedException {
-        Transaction txn = server.appendStatement(stmt.getBytes());
+        Transaction txn = server.appendStatement(hexStringToByteArray(stmt));
         if(isRegtestEnv) {
             // We generate the block ourselves if we are in regtest mode
             CatenaUtils.generateBlockRegtest();
@@ -166,6 +177,7 @@ public class NotaryApp extends CatenaApp {
         return txn;
     }
 
+    
     private static void issueRootOfTrustHandler() throws InsufficientMoneyException, IOException, InterruptedException {
         Address chainAddr = wallet.getChainAddress();
         System.out.printf("It looks like there is no Catena chain associated with the %s address from your wallet\n",
