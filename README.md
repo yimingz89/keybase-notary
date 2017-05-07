@@ -1,6 +1,7 @@
 # keybase-notary
 
-TODO
+First, you must install Catena to your local Maven repository:
 
-1. Find a good JSON library to parse javascript output from keybase.io
-
+	git clone https://github.com/alinus/catena-java
+	cd catena-java/
+	./install-catena.sh
