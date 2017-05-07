@@ -76,19 +76,23 @@ public class NotaryApp extends CatenaApp {
         //WalletAppKit server = new WalletAppKit(params, new File(directory), "-server");
 
         connectAndStart(new Runnable() {
-		@Override
-		public void run() {
-		    notarizeKeybase();
-		}
+			@Override
+			public void run() {
+			    notarizeKeybase();
+			}
 	    });
     }
 
     private static void notarizeKeybase() {
     	scanner = new Scanner(System.in);
-    	while (true) {
-    		if (!maybeIssueStatements())
-    			System.out.println("No new Merkle Roots to issue");
-    		waitTime();
+    	try {
+    		while (true) {
+    			if (!maybeIssueStatements())
+    				System.out.println("No new Merkle Roots to issue");
+    			waitTime();
+    		}
+    	} catch(Throwable e) {
+    		System.err.println("Exception occurred: " + Throwables.getStackTraceAsString(e));
     	}
     }
 
@@ -139,7 +143,7 @@ public class NotaryApp extends CatenaApp {
     		try {
     			issueStatementHandler(seqno);
     		} catch (Exception e) {
-    			System.out.println(e);
+    			System.err.println("Exception occurred while issuing statements: " + Throwables.getStackTraceAsString(e));
     			System.exit(1);
     		}
     	
@@ -150,7 +154,7 @@ public class NotaryApp extends CatenaApp {
 
     private static void issueStatement(String stmt)
 	throws InsufficientMoneyException, IOException, InterruptedException {
-        Transaction txn = appendStatement(stmt);
+        Transaction txn = appendStatement(hexStringToByteArray(stmt));
         
         Transaction prevTx = CatenaUtils.getPrevCatenaTx(wallet, txn.getHash());
         
@@ -158,8 +162,10 @@ public class NotaryApp extends CatenaApp {
     }
     
     public static byte[] hexStringToByteArray(String s) {
-        int len = s.length();
-        byte[] data = new byte[len / 2];
+    	int len = s.length();
+    	if (len % 2 == 1)
+    		System.err.println("String of odd lenth cannot be hex.");
+    	byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
             data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
                                  + Character.digit(s.charAt(i+1), 16));
@@ -167,9 +173,9 @@ public class NotaryApp extends CatenaApp {
         return data;
     }
 
-    private static Transaction appendStatement(String stmt) throws InsufficientMoneyException, IOException, 
+    private static Transaction appendStatement(byte[] stmt) throws InsufficientMoneyException, IOException, 
 								   InterruptedException {
-        Transaction txn = server.appendStatement(hexStringToByteArray(stmt));
+        Transaction txn = server.appendStatement(stmt);
         if(isRegtestEnv) {
             // We generate the block ourselves if we are in regtest mode
             CatenaUtils.generateBlockRegtest();
@@ -191,7 +197,7 @@ public class NotaryApp extends CatenaApp {
 
     private static void issueRootOfTrust(String chainName) throws InsufficientMoneyException, IOException, 
 								  InterruptedException {
-        Transaction txn = appendStatement(chainName);
+        Transaction txn = appendStatement(chainName.getBytes());
         
         System.out.printf("Created root-of-trust tx '%s' for chain '%s'\n", txn.getHash(), chainName);
     }
