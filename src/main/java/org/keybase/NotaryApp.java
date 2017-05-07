@@ -126,7 +126,7 @@ public class NotaryApp extends CatenaApp {
         //            System.out.println("Cancelled due to empty statement. Please try again but type something in.");
         //            return;
         //        }
-        System.out.println(stmt);
+	//        System.out.println(stmt); // for debugging
         issueStatement(stmt);
     }    
     
@@ -142,6 +142,7 @@ public class NotaryApp extends CatenaApp {
     		seqno++;
     		try {
     			issueStatementHandler(seqno);
+			System.out.println("Issued sequence number: " + seqno);
     		} catch (Exception e) {
     			System.err.println("Exception occurred while issuing statements: " + Throwables.getStackTraceAsString(e));
     			System.exit(1);
