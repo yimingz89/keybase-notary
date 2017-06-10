@@ -36,7 +36,7 @@
         <includeTransitiveDependencySources>false</includeTransitiveDependencySources>
       </configuration>
       <!--<executions>
-        <execution>
+          <execution>
           <id>attach-javadocs</id>
           <goals>
             <goal>jar</goal>
