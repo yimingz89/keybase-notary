@@ -16,6 +16,8 @@ public class MerkleRoot {
     private String payloadJson;
     private String txid;
     private String hash160;
+    @JsonProperty("payload_hash")
+    private String payloadHash;
     @JsonProperty("key_fingerprint")
     private String keyFingerprint;
      
@@ -69,6 +71,12 @@ public class MerkleRoot {
     }
     public void setTxid(String txid) {
         this.txid = txid;
+    }   
+    public String getPayloadHash() {
+    	return payloadHash;
+    }
+    public void setPayloadHash(String payloadHash) {
+    	this.payloadHash = payloadHash;
     }
     public String getHash160() {
         return hash160;
