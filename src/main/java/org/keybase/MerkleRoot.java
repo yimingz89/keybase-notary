@@ -18,6 +18,9 @@ public class MerkleRoot {
     private String hash160;
     @JsonProperty("payload_hash")
     private String payloadHash;
+    @JsonProperty("hash_meta")
+    private String hashMeta;
+    private Sigs sigs;
     @JsonProperty("key_fingerprint")
     private String keyFingerprint;
      
@@ -83,6 +86,18 @@ public class MerkleRoot {
     }
     public void setHash160(String hash160) {
         this.hash160 = hash160;
+    }
+    public String getHashMeta() {
+        return hashMeta;
+    }
+    public void setHashMeta(String hashMeta) {
+        this.hashMeta = hashMeta;
+    }
+    public Sigs getSigs() {
+        return sigs;
+    }
+    public void setSigs(Sigs sigs) {
+        this.sigs = sigs;
     }
     public String getKeyFingerprint() {
         return keyFingerprint;
