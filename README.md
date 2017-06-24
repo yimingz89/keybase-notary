@@ -12,3 +12,5 @@ To_Do
 
 - Add test cases for witnessing scheme - specifically make sure that
   equivocation is impossible (not the case now).
+- Add test case for writing seqnos and txns to file
+- Add test case for making sure first txns is written to file.
