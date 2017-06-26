@@ -30,7 +30,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
-// testing
 public class NotaryApp extends CatenaApp {
     
     private static final Logger log = LoggerFactory.getLogger(ServerApp.class);
