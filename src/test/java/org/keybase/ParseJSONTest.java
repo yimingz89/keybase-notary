@@ -15,6 +15,10 @@ public class ParseJSONTest {
     private static final Logger log = LoggerFactory.getLogger(ParseJSONTest.class);
 
     @Test
+    /**
+     * Tests JSON parser by comparing parsed Merkle Root with stored Merkle Roots
+     * with root number 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000
+     */
     public void testAgainstKnown() {
     	log.info("Test: Parsing JSON");
     	String[] roots = new String[7];
