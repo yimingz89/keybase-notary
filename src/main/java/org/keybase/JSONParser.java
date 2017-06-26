@@ -11,16 +11,21 @@ import java.net.URL;
 import java.io.*;
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JSONParser {
+    
+    private static final Logger log = LoggerFactory.getLogger(JSONParser.class);
 
-    public static String getMerkleRoot(int num) throws Exception {
+    public static String getMerkleRoot(int num) throws IOException, IllegalArgumentException {
         URL url = null;
         if (num >= 1) {
             url = new URL("https://keybase.io/_/api/1.0/merkle/root.json?seqno=" + num);
         } else {
-            System.out.println("ERROR: Not a valid URL");
+            log.error("ERROR: Not a valid URL");
             throw new IllegalArgumentException("Num must be a positive integer."); // num must be a positive integer
         }
 
@@ -35,7 +40,7 @@ public class JSONParser {
         try {
             url = new URL("https://keybase.io/_/api/1.0/merkle/root.json");
         } catch (Exception e) {
-            System.err.println("ERROR: Unable to access keybase merkle roots");
+            log.error("ERROR: Unable to access keybase merkle roots");
             e.printStackTrace();
             System.exit(1);
             return -1; // included to make compiler happy,
@@ -48,7 +53,7 @@ public class JSONParser {
             MerkleRoot root = objectMapper.readValue(url.openStream(), MerkleRoot.class);
             return root.getSeqno();
         } catch (IOException e) {
-            System.err.println("ERROR: IO Exception unable to read Merkle root from JSON.");
+            log.error("ERROR: IO Exception unable to read Merkle root from JSON.");
             e.printStackTrace();
             System.exit(1);
             return -1; // included to make compiler happy,

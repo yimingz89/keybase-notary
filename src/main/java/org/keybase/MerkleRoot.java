@@ -96,12 +96,7 @@ public class MerkleRoot {
     public void setHashMeta(String hashMeta) {
         this.hashMeta = hashMeta;
     }
-    //    public Sigs getSigs() {
-    //        return sigs;
-    //    }
-    //    public void setSigs(Sigs sigs) {
-    //        this.sigs = sigs;
-    //    }
+
     public String getKeyFingerprint() {
         return keyFingerprint;
     }

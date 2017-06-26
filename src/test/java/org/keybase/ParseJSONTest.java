@@ -30,7 +30,7 @@ public class ParseJSONTest {
             try {
                 assertEquals(roots[i], JSONParser.getMerkleRoot(rootNum));
             } catch (Exception e) {
-                log.info("ERROR: Failed on merkle root " +  rootNum);
+                log.error("ERROR: Failed on merkle root " +  rootNum);
             }
             rootNum *= 10;
         }

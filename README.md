@@ -13,8 +13,6 @@ To_Do
 - Add test cases for witnessing scheme - specifically make sure that
   equivocation is impossible (not the case now).
 - Add test case for writing seqnos and txns to file
-- Add test case for making sure first txns is written to file.
-- Get rid of Scanner! (take everything from command line) - maybe pass all of the arguments in command line?
 - In the event of network failure, back off exponentially until ~10 minutes. Leave log messgaes for the user.
 
 Conistency Notes:

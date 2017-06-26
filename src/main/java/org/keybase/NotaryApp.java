@@ -29,27 +29,27 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Scanner;
 
 public class NotaryApp extends CatenaApp {
 
-    private static final Logger log = LoggerFactory.getLogger(ServerApp.class);
+    private static final Logger log = LoggerFactory.getLogger(NotaryApp.class);
     private static ECKey chainKey;
     private static CatenaServer server;
-    private static Scanner scanner;
-    private static int secondsBetween = 1; // waits only 1 second.
+    private static final int SECONDS_BETWEEN = 1; // waits only 1 second.
 
     private static int seqno = 0;
     private static File numberHashPairs = new File("issuedStatements.txt");
 
     public static void main(String[] args) throws Exception {
+        System.out.println(NotaryApp.class.getClassLoader().getResource("logging.properties"));
+
         //BriefLogFormatter.init();
         //BriefLogFormatter.initVerbose();
         //BriefLogFormatter.initWithSilentBitcoinJ();
 
         if (args.length < 2) {
             // TODO: handle root-of-trust txid for new wallets with reused keys 
-            System.err.println("Usage: <chain-secret-key> mainnet|testnet|regtest [<datadir>] [<root-of-trust-txid>]");
+            log.error("Usage: <chain-secret-key> mainnet|testnet|regtest [<datadir>] [<root-of-trust-txid>]");
             return;
         }
 
@@ -66,8 +66,8 @@ public class NotaryApp extends CatenaApp {
         try {
             chainKey = DumpedPrivateKey.fromBase58(params, chainKeyStr).getKey(); 
         } catch(Exception e) {
-            System.err.println(Utils.fmt("Error decoding Bitcoin secret key '{}': {}.\n", chainKeyStr, e.getMessage()));
-            System.err.println("Stack trace from exception: " + Throwables.getStackTraceAsString(e));
+            log.error(Utils.fmt("Error decoding Bitcoin secret key '{}': {}.\n", chainKeyStr, e.getMessage()));
+            log.error("Stack trace from exception: " + Throwables.getStackTraceAsString(e));
             System.exit(1);
             return;
         }
@@ -90,24 +90,23 @@ public class NotaryApp extends CatenaApp {
      * 'notarizes' Keybase. Run from the run() function in main.
      */
     private static void notarizeKeybase() {
-        scanner = new Scanner(System.in);
         try {
             while (true) {
                 if (!maybeIssueStatements())
-                    System.out.println("No new Merkle Roots to issue");
+                    log.debug("No new Merkle Roots to issue");
                 waitTime();
             }
         } catch(Throwable e) {
-            System.err.println("Exception occurred: " + Throwables.getStackTraceAsString(e));
+            log.error("Exception occurred: " + Throwables.getStackTraceAsString(e));
         }
     }
 
-    /** Waits secondsBetween seconds. This is called inbetween
+    /** Waits SECONDS_BETWEEN seconds. This is called inbetween
      * attempts to issue a new Merkle Root.
      */
     private static void waitTime() {
         try {
-            Thread.sleep(1000 * secondsBetween);
+            Thread.sleep(1000 * SECONDS_BETWEEN);
         } catch (InterruptedException e) {	    
             Thread.currentThread().interrupt();
         }
@@ -125,9 +124,16 @@ public class NotaryApp extends CatenaApp {
         String stmt = null;
         try {
             stmt = JSONParser.getMerkleRoot(sequenceNumber);
-        } catch (Exception e) {
-            System.out.println("Error " + e + " : " + Throwables.getStackTraceAsString(e));
+        } catch (IOException e) {
+            log.error("Error " + e + " : " + Throwables.getStackTraceAsString(e));
             System.exit(1);
+            // TODO
+            // This probably means the networks is down, in which case we want to recheck.
+        } catch (IllegalArgumentException e) {
+            log.error("ERROR: Illegal Argument Exception");
+            log.error("This most likely came from passing a nonpositive integer to JSONParer.getMerkleRoot()");
+            log.error(Throwables.getStackTraceAsString(e));
+            System.exit(1); // This should never happen, so exit!!
         }
         //        System.out.print("Please type in your next issued statement: ");
         //        String stmt = scanner.nextLine();
@@ -150,10 +156,10 @@ public class NotaryApp extends CatenaApp {
             seqno = currentSeqno;
             try {
                 issueStatementHandler(seqno);
-                System.out.println("Issued sequence number: " + seqno);
+                log.debug("Issued sequence number: " + seqno);
                 issuedStatement = true;
             } catch (Exception e) {
-                System.err.println("Exception occured while issuing statements: " + Throwables.getStackTraceAsString(e));
+                log.error("Exception occured while issuing statements: " + Throwables.getStackTraceAsString(e));
                 System.exit(1);
             }
         }
@@ -179,19 +185,19 @@ public class NotaryApp extends CatenaApp {
         String tx = (stmt);
 
         if (seq.length() != 10) {
-            System.out.println("ERROR: String length should be of size 10, but is of size " + seq.length());
+            log.error("ERROR: String length should be of size 10, but is of size " + seq.length());
             System.exit(1);;
         }
         if (tx.length() != 128)	{
-            System.out.println("ERROR: Stmt length should be of size 128, but is of size " + stmt.length());
+            log.error("ERROR: Stmt length should be of size 128, but is of size " + stmt.length());
             System.exit(1);
         }
 
         try {
             Files.write(Paths.get("issuedStatements.txt"), (seq + " ").getBytes(), java.nio.file.StandardOpenOption.APPEND);
             Files.write(Paths.get("issuedStatements.txt"), (stmt + "\n").getBytes(), java.nio.file.StandardOpenOption.APPEND);
-        }catch (IOException e) {
-            System.out.println("ERROR writing to file issuedStatmenets.txt: " + Throwables.getStackTraceAsString(e));
+        } catch (IOException e) {
+            log.error("ERROR writing to file issuedStatmenets.txt: " + Throwables.getStackTraceAsString(e));
             System.exit(1);
         }
 
@@ -199,13 +205,15 @@ public class NotaryApp extends CatenaApp {
 
         Transaction prevTx = CatenaUtils.getPrevCatenaTx(wallet, txn.getHash());
 
-        System.out.printf("Created tx '%s' with statement '%s' (prev tx is '%s')\n", txn.getHash(), stmt, prevTx.getHash());
+        log.debug("Created tx '%s' with statement '%s' (prev tx is '%s')\n", txn.getHash(), stmt, prevTx.getHash());
     }
 
     public static byte[] hexStringToByteArray(String s) {
         int len = s.length();
-        if (len % 2 == 1)
-            System.err.println("String of odd lenth cannot be hex.");
+        if (len % 2 == 1) {
+            log.error("String of odd lenth cannot be hex.");
+            System.exit(1); // THis means there is a serious bug.
+        }
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
             data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
@@ -227,12 +235,12 @@ public class NotaryApp extends CatenaApp {
 
     private static void issueRootOfTrustHandler() throws InsufficientMoneyException, IOException, InterruptedException {
         Address chainAddr = wallet.getChainAddress();
-        System.out.printf("It looks like there is no Catena chain associated with the %s address from your wallet\n",
-                chainAddr);
+        //System.out.printf("It looks like there is no Catena chain associated with the %s address from your wallet\n",
+        //        chainAddr);
 
-        System.out.printf("If you'd like to start a new Catena chain for the %s address, please type in its name: ", chainAddr);
-        String chainName = scanner.nextLine();
-
+        log.debug("It looks like there is no Catena chain associated with the %s address from your wallet\n", chainAddr);
+        log.debug("Seeting chain name to \'Keybase_notary\'");
+        String chainName = "Keybase_notary";
         issueRootOfTrust(chainName);
     }
 
@@ -240,62 +248,7 @@ public class NotaryApp extends CatenaApp {
     InterruptedException {
         Transaction txn = appendStatement(chainName.getBytes());
 
-        System.out.printf("Created root-of-trust tx '%s' for chain '%s'\n", txn.getHash(), chainName);
+        log.debug("Created root-of-trust tx '%s' for chain '%s'\n", txn.getHash(), chainName);
     }
 
-    private static void printPrivKeyHandler() {
-        printPrivKey();
-    }
-
-    private static void printPrivKey() {
-        System.out.println("Catena server's chain private key: " + wallet.getChainKey().getPrivateKeyAsWiF(params));
-    }
-
-    private static void genClientConfigFileHandler() throws IOException {
-        Path path;
-        while(true) {
-            try {
-                System.out.print("Please enter the directory where you'd like the config.ini file to be saved (leave blank for 'catena-client/'): ");
-                String dirStr = scanner.nextLine();
-
-                if(dirStr.trim().isEmpty()) {
-                    dirStr = "catena-client";
-                }
-                Path dir = Paths.get(dirStr);
-                path = Paths.get(dir.toString(), "config.ini");
-
-                if(path.toFile().exists() == false) {
-                    if(dir.toFile().isFile()) {
-                        System.out.printf("The %s directory you entered is actually a file, not a directory. Try again.\n", dir);
-                        continue;
-                    }
-
-                    if(dir.toFile().exists() == false)
-                        Files.createDirectory(dir);
-
-                    break;
-                } else {
-                    System.out.printf("ERROR: We won't overwrite the already existing file at %s. Please pick a " + 
-                            "different directory where the config.ini file doesn't exist.\n", path);
-                }
-            } catch(InvalidPathException e) {
-                System.out.println("\nERROR: You must enter a valid path! Try again...");
-            }
-        }
-
-        genClientConfigFile(path);
-    }
-
-    private static void genClientConfigFile(Path path) throws IOException {
-        if(ext.hasRootOfTrustTxid()) {
-            FileWriter writer = new FileWriter(path.toFile());
-            writer.write(Utils.fmt("pubkey={}\n", wallet.getChainAddress()));
-            writer.write(Utils.fmt("txid={}\n", ext.getRootOfTrustTxid()));
-            writer.write(Utils.fmt("btc_env={}\n", btcnet)); 
-            writer.close();
-            System.out.printf("\nCatena client's %s file was written successfully!\n", path);
-        } else {
-            System.out.println("\nERROR: The root-of-trust TXN hasn't been created yet. Please issue your first statement!");
-        }        
-    }
 }
