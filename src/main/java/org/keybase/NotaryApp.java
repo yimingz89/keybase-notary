@@ -92,7 +92,7 @@ public class NotaryApp extends CatenaApp {
         }
     }
 
-    /** Waits SECONDS_BETWEEN seconds. This is called inbetween
+    /** Waits SECONDS_BETWEEN seconds. This is called in between
      * attempts to issue a new Merkle Root.
      */
     private static void waitTime() {
