@@ -1,9 +1,9 @@
 package org.keybase;
- 
+
 public class Status {   
     private int code;
     private String name;
-     
+
     public int getCode() {
         return code;
     }
@@ -16,5 +16,5 @@ public class Status {
     public void setName(String name) {
         this.name = name;
     }
-     
+
 }
