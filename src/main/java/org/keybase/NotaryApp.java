@@ -6,16 +6,10 @@
 
 package org.keybase;
 
-import java.io.*;
-import java.nio.*;
-import java.util.*;
-
 import org.bitcoinj.core.*;
-import org.bitcoinj.wallet.Wallet.SendResult;
 import org.catena.server.CatenaServer;
 import org.catena.common.CatenaApp;
 import org.catena.common.CatenaUtils;
-import org.catena.server.ServerApp;
 import org.catena.common.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +17,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Throwables;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class NotaryApp extends CatenaApp {
