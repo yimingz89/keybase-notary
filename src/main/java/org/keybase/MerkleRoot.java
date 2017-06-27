@@ -1,13 +1,13 @@
 package org.keybase;
- 
+
 import java.util.Date;
- 
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MerkleRoot {
-    
+
     private Status status;
     private String hash;
     private int seqno;
@@ -79,10 +79,10 @@ public class MerkleRoot {
         this.txid = txid;
     }   
     public String getPayloadHash() {
-    	return payloadHash;
+        return payloadHash;
     }
     public void setPayloadHash(String payloadHash) {
-    	this.payloadHash = payloadHash;
+        this.payloadHash = payloadHash;
     }
     public String getHash160() {
         return hash160;
@@ -96,18 +96,13 @@ public class MerkleRoot {
     public void setHashMeta(String hashMeta) {
         this.hashMeta = hashMeta;
     }
-    //    public Sigs getSigs() {
-    //        return sigs;
-    //    }
-    //    public void setSigs(Sigs sigs) {
-    //        this.sigs = sigs;
-    //    }
+
     public String getKeyFingerprint() {
         return keyFingerprint;
     }
     public void setKeyFingerprint(String keyFingerprint) {
         this.keyFingerprint = keyFingerprint;
     }
-     
- 
+
+
 }
