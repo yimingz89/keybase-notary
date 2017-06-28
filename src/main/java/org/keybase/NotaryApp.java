@@ -20,16 +20,18 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import static java.nio.file.StandardOpenOption.*;
 
 public class NotaryApp extends CatenaApp {
 
+    private static final String ISSUED_STATEMENTS_TXT = "issuedStatements.txt";
     private static final Logger log = LoggerFactory.getLogger(NotaryApp.class);
     private static ECKey chainKey;
     private static CatenaServer server;
     private static final int SECONDS_BETWEEN = 1; // waits only 1 second.
-
+    
     private static int seqno = 0;
-    private static File numberHashPairs = new File("issuedStatements.txt");
+    private static File numberHashPairs = new File(ISSUED_STATEMENTS_TXT);
 
     public static void main(String[] args) throws Exception {
         System.out.println(NotaryApp.class.getClassLoader().getResource("logging.properties"));
@@ -185,10 +187,10 @@ public class NotaryApp extends CatenaApp {
         }
 
         try {
-            Files.write(Paths.get("issuedStatements.txt"), (seq + " ").getBytes(), java.nio.file.StandardOpenOption.APPEND);
-            Files.write(Paths.get("issuedStatements.txt"), (stmt + "\n").getBytes(), java.nio.file.StandardOpenOption.APPEND);
+            Files.write(Paths.get(ISSUED_STATEMENTS_TXT), (seq + " ").getBytes(), APPEND, CREATE);
+            Files.write(Paths.get(ISSUED_STATEMENTS_TXT), (stmt + "\n").getBytes(), APPEND);
         } catch (IOException e) {
-            log.error("ERROR writing to file issuedStatmenets.txt: " + Throwables.getStackTraceAsString(e));
+            log.error("ERROR writing to file {}: {}", ISSUED_STATEMENTS_TXT, Throwables.getStackTraceAsString(e));
             System.exit(1);
         }
 
@@ -203,7 +205,7 @@ public class NotaryApp extends CatenaApp {
         int len = s.length();
         if (len % 2 == 1) {
             log.error("String of odd lenth cannot be hex.");
-            System.exit(1); // THis means there is a serious bug.
+            System.exit(1); // This means there is a serious bug.
         }
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
